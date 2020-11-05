@@ -7,13 +7,13 @@ Created on Wed Oct  9 09:49:39 2019
 """
 
 import sys
+import itertools
 
 import numpy as np
 import pandas as pd
 from scipy.linalg import eigh
 from scipy.spatial import distance
 from sklearn.manifold import TSNE, MDS
-import itertools
 from sklearn.neighbors import NearestNeighbors
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
