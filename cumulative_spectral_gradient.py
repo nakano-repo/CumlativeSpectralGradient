@@ -6,36 +6,35 @@ Created on Wed Oct  9 09:49:39 2019
 @author: Tomofumi Nakano
 """
 
+import sys
+
 import numpy as np
+import pandas as pd
 from scipy.linalg import eigh
 from scipy.spatial import distance
 from sklearn.manifold import TSNE, MDS
 import itertools
-import pandas as pd
 from sklearn.neighbors import NearestNeighbors
-import sys
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
-
 import umap
 from scipy.sparse.csgraph import connected_components #Need for using umap function
 
 
 class CumulativeSpectralGradient():
     
-    # tSNE (preliminary)
     def _embedding(self, input_data):
         if(self.embedding_mode=='No_embedding'):
             print('No embedding...')
             self.embedded_data = input_data
-        elif(self.embedding_mode=='TSNE'):
+        elif(self.embedding_mode=='tsne'):
             print('embedding with ' + self.embedding_mode + ' ...')
             self.embedded_data = TSNE(n_components=2, random_state=0).fit_transform(input_data)
-        elif(self.embedding_mode=='UMAP'):
+        elif(self.embedding_mode=='umap'):
             print('embedding with ' + self.embedding_mode + ' ...')
             self.embedded_data = umap.UMAP().fit_transform(input_data)
         else:
-            print('Error. \'embedding_mode\' must be No_embedding, TSNE or UMAP.')
+            print('Error. \'embedding_mode\' must be No_embedding, tsne or umap.')
             sys.exit()
 
 
@@ -150,13 +149,16 @@ class CumulativeSpectralGradient():
         plt.xlim(-1.7, 1.7)
         plt.ylim(-1.7, 1.7)
         plt.legend()
-        plt.show()
         
         
-    def show_result(self, only_graph=False):
+    def show_result(self, only_graph=False, show=True, save=False, scatter_save_path=None, mds_save_path=None):
         plt.scatter(self.embedded_data[:,0], self.embedded_data[:,1], c=self.labels, cmap=cm.tab10)
         plt.colorbar()
-        plt.show()
+        if save:
+            plt.savefig(scatter_save_path)
+        if show:
+            plt.show()
+        plt.close()
         
         if not only_graph:
             np.set_printoptions(precision=4, suppress=True)
@@ -171,6 +173,11 @@ class CumulativeSpectralGradient():
             print('\nCSG c-measure: ' + str(self.csg))
         
         self.multi_dimensional_scaling()
+        if save:
+            plt.savefig(mds_save_path)
+        if show:
+            plt.show()
+        plt.close()
 
     
 if __name__ == '__main__':
@@ -187,11 +194,11 @@ if __name__ == '__main__':
     
     import time
     t_before = time.time()
-    model.fit(dataset.data, dataset.target, montecarlo_sampling_size, k_for_nearest_neighbor, embedding_mode='UMAP')
+    model.fit(dataset.data, dataset.target, montecarlo_sampling_size, k_for_nearest_neighbor, embedding_mode='umap')
     t_after = time.time()
     elapsed_time = t_after - t_before
     
-    model.show_result(only_graph=True)
+    model.show_result(only_graph=False)
     
     print('elapsed time: ' + str(elapsed_time))
     
