@@ -23,14 +23,10 @@ def label_skewing(labels, num):
             
 
 if __name__ == '__main__':
+
+    embedding_mode = 'tsne'
     
     np.random.seed(0)
-    
-    # use proxy in this script for load_data()
-    import urllib
-    proxy_support = urllib.request.ProxyHandler({'https': 'http://proxy.mei.co.jp:8080'})
-    opener = urllib.request.build_opener(proxy_support)
-    urllib.request.install_opener(opener)
     
     # prepare data
     from keras.datasets import mnist
@@ -41,10 +37,10 @@ if __name__ == '__main__':
     x_train = x_train.reshape((np.shape(x_train)[0], num_of_pixel))
     y_train = np.ravel(y_train)
     
-#    from sklearn import datasets
-#    dataset = datasets.load_iris()
-#    x_train = dataset.data
-#    y_train = dataset.target
+    # from sklearn import datasets
+    # dataset = datasets.load_iris()
+    # x_train = dataset.data
+    # y_train = dataset.target
     
     label_number = np.size(np.unique(y_train))
     eigenvalues = np.zeros((label_number, label_number))
@@ -58,8 +54,10 @@ if __name__ == '__main__':
         y_skewed = label_skewing(y_train, num_of_skewed_labels)
         
         model = CumulativeSpectralGradient()
-        model.fit(x_train, y_skewed, montecarlo_sampling_size, k_for_nearest_neighbor, embedding_mode='TSNE')        
-        model.show_result(only_graph=True)
+        model.fit(x_train, y_skewed, montecarlo_sampling_size, k_for_nearest_neighbor, embedding_mode=embedding_mode)        
+        model.show_result(only_graph=True, show=False, save=True, 
+                        scatter_save_path='mnist_skewing/{}/{}_{}.png'.format(embedding_mode,embedding_mode,num_of_skewed_labels),
+                        mds_save_path='mnist_skewing/{}/{}_mds{}.png'.format(embedding_mode,embedding_mode,num_of_skewed_labels))
         eigenvalues[num_of_skewed_labels-1, :] = model.eigenvalues
         csgs[num_of_skewed_labels-1] = model.csg
         
@@ -68,8 +66,9 @@ if __name__ == '__main__':
     for num_of_skewed_labels in range(label_number):
         plt.plot(horizontal_axis, eigenvalues[num_of_skewed_labels, :], marker='|', label=num_of_skewed_labels)
     plt.legend()
-    plt.show()
+    plt.savefig('mnist_skewing/{}/{}_csgs.png'.format(embedding_mode,embedding_mode))
+    plt.close()
     
     plt.plot(horizontal_axis, csgs, marker='D')
-    plt.show()
-    
+    plt.savefig('mnist_skewing/{}/{}_eigenvalues.png'.format(embedding_mode,embedding_mode))
+    plt.close()
