@@ -27,10 +27,10 @@ array([[ 0.    ,  0.0145,  0.0189,  0.0244,  0.0302,  0.0417,  0.0462,
        [ 0.    ,  2.5235,  2.8136,  3.4054,  3.4967,  3.5842,  3.5881,
          3.6368,  3.7204,  3.8972]])
 
-![umap_eigenvalues](/home/pec/python_scripts/cumulative_spectral_gradient/mnist_skewing/umap_eigenvalues.png)
+![umap_eigenvalues](umap/umap_eigenvalues.png)
 
 ### CSG
 
  [0.0235, 0.5398, 0.8593, 0.8608, 1.6186, 1.749 , 1.8872, 1.9079, 2.6404, 2.2711]
 
-![umap_csgs](/home/pec/python_scripts/cumulative_spectral_gradient/mnist_skewing/umap_csgs.png)
+![umap_csgs](umap/umap_csgs.png)
